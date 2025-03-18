@@ -1,26 +1,71 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
+import { Prisma } from '@prisma/client';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class BoardsService {
-  create(createBoardDto: CreateBoardDto) {
-    return 'This action adds a new board';
+
+  constructor(private readonly databaseService: DatabaseService) { }
+
+  create(createBoardDto: Prisma.BoardCreateInput) {
+    return this.databaseService.board.create({ data: createBoardDto })
   }
 
   findAll() {
-    return `This action returns all boards`;
+    return this.databaseService.board.findMany({
+      select: {
+        id: true,
+        name: true,
+        columns: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        },
+      }
+    })
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} board`;
+    return this.databaseService.board.findFirst({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        columns: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        },
+      }
+    })
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
+  update(id: number, updateBoardDto: Prisma.BoardUpdateInput) {
+    return this.databaseService.board.update({
+      where: { id },
+      data: updateBoardDto,
+      select: {
+        id: true,
+        name: true,
+        columns: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        },
+      }
+    })
   }
 
   remove(id: number) {
-    return `This action removes a #${id} board`;
+    return this.databaseService.board.delete({ where: { id } })
   }
 }
