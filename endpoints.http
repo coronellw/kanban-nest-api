@@ -10,7 +10,23 @@ POST http://localhost:3000/users
 content-type: application/json
 
 {
-    "name": "bart",
-    "email": "bart@simpson.com",
-    "password": "je suis le bart"
+    "name": "homer",
+    "email": "homer@simpson.com",
+    "password": "je suis le homer"
+}
+
+
+###
+# Get a list of boards
+
+GET http://localhost:3000/boards
+
+###
+# Create a new board
+POST http://localhost:3000/boards
+Content-Type: application/json
+
+{
+    "name": "first board",
+    "userId": 1
 }

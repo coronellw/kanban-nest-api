@@ -11,7 +11,18 @@ export class UsersService {
   }
 
   async findAll() {
-    return this.databaseService.user.findMany({})
+    return this.databaseService.user.findMany({
+      include: {
+        boards: true,
+        tasks: true,
+      },
+      omit: {
+        dateOfBirth: true,
+        password: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    })
   }
 
   async findOne(id: number) {
