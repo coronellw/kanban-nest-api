@@ -1,0 +1,16 @@
+# Get users list 
+
+GET http://localhost:3000/users
+
+
+###
+# Create new user
+
+POST http://localhost:3000/users
+content-type: application/json
+
+{
+    "name": "bart",
+    "email": "bart@simpson.com",
+    "password": "je suis le bart"
+}
