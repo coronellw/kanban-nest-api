@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { CreateColumnDto } from './dto/create-column.dto';
-import { UpdateColumnDto } from './dto/update-column.dto';
+import { Prisma } from '@prisma/client';
+import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class ColumnsService {
-  create(createColumnDto: CreateColumnDto) {
-    return 'This action adds a new column';
+  constructor(private readonly databaseService: DatabaseService) { }
+
+  create(createColumnDto: Prisma.ColumnCreateInput) {
+    return this.databaseService.column.create({ data: createColumnDto })
   }
 
   findAll() {
-    return `This action returns all columns`;
+    return this.databaseService.column.findMany({})
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} column`;
+    return this.databaseService.column.findFirst({ where: { id } })
   }
 
-  update(id: number, updateColumnDto: UpdateColumnDto) {
-    return `This action updates a #${id} column`;
+  update(id: number, updateColumnDto: Prisma.ColumnUpdateInput) {
+    return this.databaseService.column.update({
+      where: { id },
+      data: updateColumnDto
+    })
   }
 
   remove(id: number) {
-    return `This action removes a #${id} column`;
+    return this.databaseService.column.delete({ where: { id } })
   }
 }

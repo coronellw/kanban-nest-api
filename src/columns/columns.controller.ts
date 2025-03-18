@@ -1,14 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ColumnsService } from './columns.service';
-import { CreateColumnDto } from './dto/create-column.dto';
-import { UpdateColumnDto } from './dto/update-column.dto';
+import { Prisma } from '@prisma/client';
 
 @Controller('columns')
 export class ColumnsController {
   constructor(private readonly columnsService: ColumnsService) {}
 
   @Post()
-  create(@Body() createColumnDto: CreateColumnDto) {
+  create(@Body() createColumnDto: Prisma.ColumnCreateInput) {
     return this.columnsService.create(createColumnDto);
   }
 
@@ -23,7 +22,7 @@ export class ColumnsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateColumnDto: UpdateColumnDto) {
+  update(@Param('id') id: string, @Body() updateColumnDto: Prisma.ColumnUpdateInput) {
     return this.columnsService.update(+id, updateColumnDto);
   }
 
