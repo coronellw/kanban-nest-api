@@ -2,6 +2,7 @@ import { Controller, Ip, Get, Post, Body, Patch, Param, Delete } from '@nestjs/c
 import { Prisma } from '@prisma/client';
 import { UsersService } from './users.service';
 import { CustomLoggerService } from 'src/custom-logger/custom-logger.service';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -13,6 +14,11 @@ export class UsersController {
   @Post()
   create(@Body() createUserDto: Prisma.UserCreateInput) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Post('login')
+  login(@Body() loginUserDto: LoginUserDto) {
+    return this.usersService.login(loginUserDto);
   }
 
   @Get()
