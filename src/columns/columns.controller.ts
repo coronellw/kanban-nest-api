@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ColumnsService } from './columns.service';
 import { Prisma } from '@prisma/client';
+import { ColumnsService } from './columns.service';
 
 @Controller('columns')
 export class ColumnsController {

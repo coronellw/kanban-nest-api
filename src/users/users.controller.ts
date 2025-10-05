@@ -1,7 +1,7 @@
-import { Controller, Ip, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Ip } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
 import { UsersService } from './users.service';
-import { CustomLoggerService } from 'src/custom-logger/custom-logger.service';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')

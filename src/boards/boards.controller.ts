@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BoardsService } from './boards.service';
 import { Prisma } from '@prisma/client';
+import { BoardsService } from './boards.service';
 
 @Controller('boards')
 export class BoardsController {
