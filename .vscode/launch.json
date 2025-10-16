@@ -1,0 +1,117 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug NestJS App",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/@nestjs/cli/bin/nest.js",
+      "args": ["start", "--debug", "--watch"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "inspector",
+      "port": 9229,
+      "runtimeArgs": ["--nolazy"],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "Debug NestJS App (Direct)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/main.ts",
+      "args": [],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "inspector",
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "-r",
+        "tsconfig-paths/register"
+      ],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+        "--verbose"
+      ],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeArgs": [
+        "--inspect-brk"
+      ],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "Debug Jest Tests (Current File)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--no-cache",
+        "--verbose",
+        "${relativeFile}"
+      ],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeArgs": [
+        "--inspect-brk"
+      ],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    },
+    {
+      "name": "Debug E2E Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "--config",
+        "./test/jest-e2e.json",
+        "--runInBand",
+        "--no-cache",
+        "--verbose"
+      ],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "runtimeArgs": [
+        "--inspect-brk"
+      ],
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
+      "outputCapture": "std"
+    }
+  ]
+}

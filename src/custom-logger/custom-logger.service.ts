@@ -19,6 +19,7 @@ export class CustomLoggerService extends ConsoleLogger {
             const logFileName = path.join(__dirname, '..', '..', 'logs', 'logFile.log')
             await fsPromises.appendFile(logFileName, formattedEntry)
         } catch (error) {
+            console.log('ERROR IN THE ERROR LOGGER')
             if (error instanceof Error) console.log(error.message)
         }
     }

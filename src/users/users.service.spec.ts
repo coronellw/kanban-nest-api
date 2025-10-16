@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from './users.service';
 import { DatabaseService } from '@/database/database.service';
+import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { createMockDatabaseService, mockUserData } from '@/__mocks__';
 
@@ -11,7 +13,11 @@ describe('UsersService', () => {
   let databaseService: DatabaseService;
   let mockDatabaseService: ReturnType<typeof createMockDatabaseService>;
 
-  const mockUser = mockUserData.basic;
+  const hashedPassword = '$2b$10$5vXgbdVmlhMAuaexzx/e7uedUTSf4at7JJkgam9NBQSFndt76YnWC'; // bcrypt hash of 'password123'
+  const mockUser = {
+    ...mockUserData.basic,
+    password: hashedPassword, // Use hashed password in mock
+  };
   const mockUserWithoutSensitiveData = mockUserData.withoutSensitiveData;
 
   const mockUserWithRelations = {
@@ -29,6 +35,15 @@ describe('UsersService', () => {
         {
           provide: DatabaseService,
           useValue: mockDatabaseService,
+        },
+        {
+          provide: CustomLoggerService,
+          useValue: {
+            log: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
+            debug: jest.fn(),
+          },
         },
       ],
     }).compile();
@@ -57,8 +72,14 @@ describe('UsersService', () => {
 
       const result = await service.create(createUserDto);
 
+      // Expect that the password was hashed before saving
       expect(databaseService.user.create).toHaveBeenCalledWith({
-        data: createUserDto,
+        data: expect.objectContaining({
+          email: createUserDto.email,
+          name: createUserDto.name,
+          dateOfBirth: createUserDto.dateOfBirth,
+          password: expect.not.stringMatching('password123'), // Password should be hashed, not plain text
+        }),
       });
       expect(result).toEqual(mockUser);
     });

@@ -1,14 +1,25 @@
+import * as bcrypt from 'bcrypt';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '@/database/database.service';
 import { LoginUserDto } from './dto/login-user.dto';
+import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly loggerService: CustomLoggerService
+  ) { }
 
   async create(createUserDto: Prisma.UserCreateInput) {
-    return this.databaseService.user.create({ data: createUserDto })
+    // Hash the password before saving
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+    
+    // Create user with hashed password
+    const userData = { ...createUserDto, password: hashedPassword };
+    return this.databaseService.user.create({ data: userData });
   }
 
   async findAll() {
@@ -33,7 +44,13 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: Prisma.UserUpdateInput) {
-    return this.databaseService.user.update({ data: updateUserDto, where: { id } })
+    // If password is being updated, hash it
+    if (updateUserDto.password) {
+      const saltRounds = 10;
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password as string, saltRounds);
+    }
+    
+    return this.databaseService.user.update({ data: updateUserDto, where: { id } });
   }
 
   async remove(id: number) {
@@ -52,9 +69,9 @@ export class UsersService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // For now, comparing plain text passwords
-    // In production, you should hash passwords and compare hashes
-    if (user.password !== password) {
+    // Compare the provided password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -62,4 +79,10 @@ export class UsersService {
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
+
+
+  async findByEmail(email: string) {
+    return this.databaseService.user.findUnique({ where: { email } });
+  }
+
 }

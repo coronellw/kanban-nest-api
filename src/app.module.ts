@@ -8,6 +8,7 @@ import { ColumnsModule } from '@/columns/columns.module';
 import { TasksModule } from '@/tasks/tasks.module';
 import { DatabaseModule } from '@/database/database.module';
 import { CustomLoggerModule } from '@/custom-logger/custom-logger.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CustomLoggerModule } from '@/custom-logger/custom-logger.module';
     DatabaseModule,
     CustomLoggerModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

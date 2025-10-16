@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Ip } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Ip, HttpCode, HttpStatus } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
 import { UsersService } from './users.service';
@@ -17,6 +17,7 @@ export class UsersController {
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   login(@Body() loginUserDto: LoginUserDto) {
     return this.usersService.login(loginUserDto);
   }
