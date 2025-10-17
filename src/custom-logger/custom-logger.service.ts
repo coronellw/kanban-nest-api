@@ -6,9 +6,14 @@ import * as path from "path"
 @Injectable()
 export class CustomLoggerService extends ConsoleLogger {
     async logToFile(entry: string) {
-        const formattedEntry = `${Intl.DateTimeFormat('en-US', {
-            dateStyle: 'short',
-            timeStyle: 'short',
+        const formattedEntry = `${new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
             timeZone: 'America/Halifax'
         }).format(new Date())}\t${entry}\n`
 
@@ -24,13 +29,39 @@ export class CustomLoggerService extends ConsoleLogger {
         }
     }
 
+    private getCallerContext(): string {
+        const stack = new Error().stack;
+        if (stack) {
+            // Parse stack trace to find the caller
+            const stackLines = stack.split('\n');
+            // stackLines[0] is "Error"
+            // stackLines[1] is this getCallerContext method
+            // stackLines[2] is the log/error method
+            // stackLines[3] is the actual caller
+            const callerLine = stackLines[3];
+            const match = callerLine?.match(/at\s+(\w+)\./);
+            return match ? match[1] : 'anonymous';
+        }
+        return 'anonymous';
+    }
+
     log(message: any, context?: string) {
+        // If no context provided, try to get the caller class name from stack trace
+        if (!context) {
+            context = this.getCallerContext();
+        }
+        
         const entry = `${context}\t${message}`
         this.logToFile(entry)
         super.log(message, context)
     }
 
     error(message: any, stackOrContext?: string) {
+        // If no context provided, try to get the caller class name from stack trace
+        if (!stackOrContext) {
+            stackOrContext = this.getCallerContext();
+        }
+        
         const entry = `${stackOrContext}\t${message}`
         this.logToFile(entry)
         super.error(message, stackOrContext)

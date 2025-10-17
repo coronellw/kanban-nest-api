@@ -16,7 +16,19 @@ content-type: application/json
 }
 
 ###
-# Login user
+# Create another new user
+
+POST http://localhost:3000/users
+content-type: application/json
+
+{
+    "name": "bart",
+    "email": "bart@simpson.com",
+    "password": "je suis le bart"
+}
+
+###
+# Login Homer user
 
 POST http://localhost:3000/users/login
 content-type: application/json
@@ -26,6 +38,16 @@ content-type: application/json
     "password": "je suis le homer"
 }
 
+###
+# Login Bart
+
+POST http://localhost:3000/users/login
+content-type: application/json
+
+{
+    "email": "bart@simpson.com",
+    "password": "je suis le bart"
+}
 
 ###
 # Get a list of boards

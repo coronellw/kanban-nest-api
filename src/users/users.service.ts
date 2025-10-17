@@ -9,8 +9,9 @@ import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
 export class UsersService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly loggerService: CustomLoggerService
   ) { }
+
+  private readonly logger = new CustomLoggerService(UsersService.name);
 
   async create(createUserDto: Prisma.UserCreateInput) {
     // Hash the password before saving
@@ -66,17 +67,20 @@ export class UsersService {
     });
 
     if (!user) {
+      this.logger.log('USER NOT FOUND')
       throw new UnauthorizedException('Invalid credentials');
     }
 
     // Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
+      this.logger.log('password did not match!')
       throw new UnauthorizedException('Invalid credentials');
     }
 
     // Return user without password
     const { password: _, ...userWithoutPassword } = user;
+    this.logger.log('Logged in user\n\n'+JSON.stringify(userWithoutPassword, undefined, 2))
     return userWithoutPassword;
   }
 
