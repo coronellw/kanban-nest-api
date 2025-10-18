@@ -30,8 +30,13 @@ model User {
 
 model Token {
   userId     Int
-  user       User   @relation(fields: [userId], references: [id])
-  tokenValue String @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenValue String
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime?
+
+  @@id([userId, tokenValue])
+  @@index([tokenValue])
 }
 
 model Board {

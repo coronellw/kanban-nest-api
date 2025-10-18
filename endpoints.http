@@ -1,3 +1,15 @@
+###
+# Login Homer user
+
+POST http://localhost:3000/auth/sign
+content-type: application/json
+
+{
+    "email": "homer@simpson.com",
+    "password": "je suis le homer"
+}
+
+###
 # Get users list 
 
 GET http://localhost:3000/users

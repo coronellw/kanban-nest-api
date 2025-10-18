@@ -1,14 +1,17 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '@/database/database.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
+import { AuthService } from '@/auth/auth.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly databaseService: DatabaseService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
   ) { }
 
   private readonly logger = new CustomLoggerService(UsersService.name);
@@ -61,27 +64,8 @@ export class UsersService {
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
     
-    // Find user by email
-    const user = await this.databaseService.user.findUnique({
-      where: { email }
-    });
-
-    if (!user) {
-      this.logger.log('USER NOT FOUND')
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    // Compare the provided password with the hashed password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      this.logger.log('password did not match!')
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
-    this.logger.log('Logged in user\n\n'+JSON.stringify(userWithoutPassword, undefined, 2))
-    return userWithoutPassword;
+    
+    return this.authService.signIn(email, password);
   }
 
 
