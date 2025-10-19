@@ -35,6 +35,12 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('me')
+  me(@Request() req) {
+    return req.user?.user
+  }
+
+  @UseGuards(AuthGuard)
   @Get()
   findAll(@Ip() ip: string) {
     this.logger.log(`Request for all employees\t${ip}`)

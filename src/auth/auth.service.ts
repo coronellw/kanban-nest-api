@@ -62,7 +62,7 @@ export class AuthService {
         return null;
     }
 
-    async signIn(email: string, password: string): Promise<{ token: string }> {
+    async signIn(email: string, password: string): Promise<{ token: string, user: {_id: number, name: string, email: string} }> {
         const user = await this.usersService.findByEmail(email)
         
         if (!user) {
@@ -84,7 +84,7 @@ export class AuthService {
         const expiresAt = this.getTokenExpirationDate();
         await this.saveToken(user.id, token, expiresAt);
 
-        return { ...payload, token }
+        return { user: {_id: payload.id, ...payload}, token }
     }
 
     async signUp(user:Prisma.UserCreateInput): Promise<{}> {

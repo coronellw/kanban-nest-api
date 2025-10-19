@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const token = this.extractTokenFromHeader(request);
-        
+
         if (!token) {
             throw new UnauthorizedException();
         }
@@ -48,12 +48,12 @@ export class AuthGuard implements CanActivate {
             });
 
             // checks we found the token, and such token matched the payload id and the user's id
-            if(!user || !user.length || user[0].id !== payload.id) {
+            if (!user || !user.length || user[0].id !== payload.id) {
                 this.logger.log('INVALID SESSION!!!!')
                 throw new UnauthorizedException('Invalid session');
             }
 
-            request['user'] = { ...payload, token };
+            request['user'] = { user: { _id: payload.id, ...payload }, token };
         } catch (error) {
             throw new UnauthorizedException();
         }
