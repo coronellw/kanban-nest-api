@@ -1,13 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { BoardsService } from './boards.service';
+import { AuthGuard } from '@/auth/auth.guard';
+import { CustomLoggerService } from '@/custom-logger/custom-logger.service';
 
 @Controller('boards')
 export class BoardsController {
-  constructor(private readonly boardsService: BoardsService) {}
+  constructor(
+    private readonly boardsService: BoardsService,
+  ) { }
+  
+  private readonly logger = new CustomLoggerService(BoardsController.name);
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createBoardDto: Prisma.BoardCreateInput) {
+  async create(@Body() createBoardDto: Prisma.BoardCreateInput, @Request() req) {    
+    createBoardDto.owner = {
+      connect: { id: +req.user.user.id }
+    };
+    
     return this.boardsService.create(createBoardDto);
   }
 

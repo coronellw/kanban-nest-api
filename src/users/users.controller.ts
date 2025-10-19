@@ -12,6 +12,7 @@ export class UsersController {
   ) { }
   private readonly logger = new CustomLoggerService(UsersController.name)
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createUserDto: Prisma.UserCreateInput) {
     return this.usersService.create(createUserDto);

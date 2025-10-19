@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from '@/database/database.service';
+import { addIdAlias, addIdAliasToArray } from '@/helpers/add-id-alias/add-id-alias';
 
 @Injectable()
 export class BoardsService {
 
   constructor(private readonly databaseService: DatabaseService) { }
 
-  create(createBoardDto: Prisma.BoardCreateInput) {
-    return this.databaseService.board.create({ data: createBoardDto })
-  }
-
-  findAll() {
-    return this.databaseService.board.findMany({
+  async create(createBoardDto: Prisma.BoardCreateInput) {
+    const newBoard = await this.databaseService.board.create({ 
+      data: createBoardDto,
       select: {
         id: true,
         name: true,
@@ -25,11 +23,30 @@ export class BoardsService {
           }
         },
       }
-    })
+    });
+    return addIdAlias(newBoard);
   }
 
-  findOne(id: number) {
-    return this.databaseService.board.findFirst({
+  async findAll() {
+    const boards = await this.databaseService.board.findMany({
+      select: {
+        id: true,
+        name: true,
+        columns: true,
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        },
+      }
+    });
+    return addIdAliasToArray(boards);
+  }
+
+  async findOne(id: number) {
+    const board = await this.databaseService.board.findFirst({
       where: { id },
       select: {
         id: true,
@@ -43,11 +60,12 @@ export class BoardsService {
           }
         },
       }
-    })
+    });
+    return board ? addIdAlias(board) : null;
   }
 
-  update(id: number, updateBoardDto: Prisma.BoardUpdateInput) {
-    return this.databaseService.board.update({
+  async update(id: number, updateBoardDto: Prisma.BoardUpdateInput) {
+    const board = await this.databaseService.board.update({
       where: { id },
       data: updateBoardDto,
       select: {
@@ -62,10 +80,12 @@ export class BoardsService {
           }
         },
       }
-    })
+    });
+    return addIdAlias(board);
   }
 
-  remove(id: number) {
-    return this.databaseService.board.delete({ where: { id } })
+  async remove(id: number) {
+    const board = await this.databaseService.board.delete({ where: { id } });
+    return addIdAlias(board);
   }
 }
