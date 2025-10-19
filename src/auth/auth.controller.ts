@@ -1,6 +1,7 @@
-import { Controller, Body, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Body, Post, HttpCode, HttpStatus, Request, UseGuards, Get, Delete } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -16,5 +17,17 @@ export class AuthController {
     @Post('signup')
     signUp(@Body() user: Prisma.UserCreateInput) {
         return this.authService.signUp(user)
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('settings')
+    getProfile(@Request() req) {
+        return req.user
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete('logout')
+    logOut(@Request() req) {
+        this.authService.deleteToken(req.user.id, req.user.token)
     }
 }

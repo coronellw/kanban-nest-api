@@ -68,6 +68,10 @@ export class UsersService {
     return this.authService.signIn(email, password);
   }
 
+  async logout(userId: number, token: string) {
+    return this.authService.deleteToken(userId, token);
+  }
+
 
   async findByEmail(email: string) {
     return this.databaseService.user.findUnique({ where: { email } });
