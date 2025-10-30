@@ -18,7 +18,7 @@ GET http://localhost:3000/users
 ###
 # Create new user
 
-POST http://localhost:3000/users
+POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
@@ -30,7 +30,7 @@ content-type: application/json
 ###
 # Create another new user
 
-POST http://localhost:3000/users
+POST http://localhost:3000/auth/signup
 content-type: application/json
 
 {
